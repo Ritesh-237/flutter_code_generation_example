@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:injectable/injectable.dart';
 
+import '../features/news/data/client/interceptor.dart';
+
 // import 'interceptor.dart';
 class DioFactory {
   final String baseUrl;
@@ -13,7 +15,8 @@ class DioFactory {
     this.baseUrl,
     // this._appendTimestampInterceptor,
   );
-  Dio create() => Dio(_createBaseOptions());
+  Dio create() =>
+      Dio(_createBaseOptions())..interceptors.add(NewsInterceptor());
   // ..interceptors.add(_appendTimestampInterceptor)
   // ..httpClientAdapter = _createAdapter();
 
@@ -32,6 +35,7 @@ class DioFactory {
       });
 
   _createBaseOptions() => BaseOptions(
+        validateStatus: (_) => true,
         baseUrl: baseUrl, // Timeout in milliseconds for receiving data
         receiveTimeout: const Duration(milliseconds: 15000),
 
@@ -41,10 +45,10 @@ class DioFactory {
         // Timeout in milliseconds for opening url
         connectTimeout: const Duration(milliseconds: 15000),
 
-        // Common query parameters for each request
-        queryParameters: <String, dynamic>{'parameter1': 'value1'},
+        // // Common query parameters for each request
+        // queryParameters: <String, dynamic>{'parameter1': 'value1'},
 
-        // Common headers for each request
-        headers: <String, dynamic>{'header1': 'value1'},
+        // // Common headers for each request
+        // headers: <String, dynamic>{'header1': 'value1'},
       );
 }

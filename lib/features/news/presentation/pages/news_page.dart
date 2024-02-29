@@ -15,29 +15,40 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   late HomeBloc _homeBloc;
+  final int _pageSize = 20;
 
   @override
   void initState() {
     super.initState();
     _homeBloc = getIt<HomeBloc>();
-    _homeBloc.add(NewsEvent.getNewsEvent(limit: 0, pageNo: 0));
+    _homeBloc.add(NewsEvent.getNewsEvent(limit: _pageSize, pageNo: 0));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(centerTitle: true, title: Text("News Articles")),
       body: BlocConsumer<HomeBloc, NewsState>(
         bloc: _homeBloc,
         listener: (context, state) {},
         builder: (context, state) {
           if (state is NewsLoadedState) {
-            return Center(
-                child:
-                    TextButton(onPressed: () {}, child: const Text("Retry")));
+            return ListView.builder(
+                itemCount: state.userModel.articles.length,
+                itemBuilder: (context, index) => ListTile(
+                    leading: Text(
+                      '${index + 1}',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    title: Text(state.userModel.articles[index].title)));
           } else if (state is NewsFailedState) {
             return Center(
-                child:
-                    TextButton(onPressed: () {}, child: const Text("Retry")));
+                child: TextButton(
+                    onPressed: () {
+                      _homeBloc.add(
+                          NewsEvent.getNewsEvent(limit: _pageSize, pageNo: 0));
+                    },
+                    child: const Text("Retry")));
           }
           return const CircularProgressIndicator();
         },

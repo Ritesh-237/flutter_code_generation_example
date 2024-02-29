@@ -17,8 +17,8 @@ class HomeBloc extends Bloc<NewsEvent, NewsState> {
 
   Future<void> _getNews(GetNewsEvent event, Emitter<NewsState> emit) async {
     try {
-      Either<Failure, RemoteNewsResponse> response =
-          await getNewsUseCase.getNews(pageNo: 0, limit: 0);
+      Either<Failure, RemoteNewsResponse> response = await getNewsUseCase
+          .getNews(pageNo: event.pageNo, limit: event.limit);
       response.fold((error) => emit(NewsState.failed(message: error.message)),
           (result) => emit(NewsState.loaded(userModel: result)));
     } catch (error) {
